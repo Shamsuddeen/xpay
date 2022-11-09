@@ -1,0 +1,6 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "^7.5",
+        "seerbit/seerbit-php-sdk": "^2.3"
+    }
+}

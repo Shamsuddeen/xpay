@@ -160,6 +160,19 @@
             return $result;
         }
 
+        public function loginUser($phone, $password){
+            $query  = "SELECT * FROM `users` WHERE `phone` = :phone AND `password` = :password";
+            $stmt   = $this->connect()->prepare($query);
+            $stmt->execute(['phone' => $phone, 'password' => $password]);
+            if($stmt->rowCount() > 0){
+                $result = $stmt->fetch();
+            }else{
+                $result = "error";
+            }
+
+            return $result;
+        }
+
     }
 
 ?>

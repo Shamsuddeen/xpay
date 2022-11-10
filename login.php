@@ -34,6 +34,7 @@
         <div class="login_wrapper">
             <div class="animate form login_form">
                 <section class="login_content">
+                    <div id="info"></div>
                     <form>
                         <h1>Login Form</h1>
                         <div>

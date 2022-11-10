@@ -1,6 +1,6 @@
 <?php
     date_default_timezone_set('Africa/Lagos');
-    require('./vendor/autoload.php');
+    require(__DIR__.'/../vendor/autoload.php');
 
     use GuzzleHttp\Client;
 
@@ -55,7 +55,7 @@
             $host     = "localhost";
             $username = "root";
             $password = "";
-            $dbname   = "library";
+            $dbname   = "xpay";
             $charset  = "utf8mb4";
             try {
                 $dsn = 'mysql:host=' . $host . ';dbname=' . $dbname . ";charset=" . $charset;
@@ -111,13 +111,13 @@
                 foreach ($options as $key => $value) { // loop through the arrays and set the conditions
                     $parts[] = "`" . $key . "` = '$value' ";
                 }
-                $query  = $query . implode(",", $parts);
+                $query  = $query . implode(" AND ", $parts);
             }else{ // or just fetch all users
                 $query  = "SELECT * FROM `users`";
             }
             $stmt   = $this->connect()->prepare($query);
-
-            if($stmt->execute()){
+            $stmt->execute();
+            if($stmt->rowCount() > 0){
                 $result = $stmt->fetchAll();
             }else{
                 $result = "404";
@@ -131,16 +131,30 @@
             $query  = "SELECT * FROM `users` WHERE ";
             $parts = array();
             foreach ($options as $key => $value) { // loop through the array and set the conditions
-                $parts[] = "`" . $key . "` = '$value' ";
+                $parts[] = "`" . $key . "` = '$value' LIMIT 1";
             }
-            $query  = $query . implode(",", $parts);
+            $query  = $query . implode(" AND ", $parts);
 
             $stmt   = $this->connect()->prepare($query);
-
-            if($stmt->execute()){
+            $stmt->execute();
+            if($stmt->rowCount() > 0){
                 $result = $stmt->fetch();
             }else{
                 $result = "404";
+            }
+
+            return $result;
+        }
+
+        public function registerUser($firstName, $lastName, $phone, $email = null, $password, $uuid, $type = null, $agent = null)
+        {
+            $query  = "INSERT INTO `users` (`first_name`, `last_name`, `phone`, `email`, `password`, `uuid`, `type`, `agent`)
+                                VALUES (:firstName, :lastName, :phone, :email, :password, :uuid, :type, :agent)";
+            $stmt   = $this->connect()->prepare($query);
+            if($stmt->execute(['firstName' => $firstName, 'lastName' => $lastName, 'phone' => $phone, 'email' => $email, 'password' => $password, 'uuid' => $uuid, 'type' => $type, 'agent' => $agent])){
+                $result = "success";
+            }else{
+                $result = "error";
             }
 
             return $result;

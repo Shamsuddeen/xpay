@@ -346,7 +346,7 @@ class xPay
     }
 
     public function getInvoice(array $options){
-        $query  = "SELECT * FROM `invoice` WHERE ";
+        $query  = "SELECT * FROM `invoices` WHERE ";
         $parts = array();
         foreach ($options as $key => $value) { // loop through the array and set the conditions
             $parts[] = "`" . $key . "` = '$value' LIMIT 1";
@@ -365,7 +365,7 @@ class xPay
     }
 
     public function updateInvoice($invoice, array $options){
-        $query  = "SELECT * FROM `invoice` SET ";
+        $query  = "SELECT * FROM `invoices` SET ";
         $parts = array();
         foreach ($options as $key => $value) { // loop through the array and set the conditions
             $parts[] = "`" . $key . "` = '$value' WHERE `id` = :invoice";

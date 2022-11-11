@@ -101,43 +101,6 @@
     </div>
 
     <?php include('components/scripts.php'); ?>
-    <script>
-        $(document).ready(function () {
-            // Submit Form
-            $('form').on('submit', function (e) {
-                $.ajax({
-                    type: 'post',
-                    url: 'service/create-wallet.php',
-                    data: $(this).serialize(),
-                    success: function (msg) {
-                        $('#info').html(msg);
-                    }
-                });
-                e.preventDefault();
-            });
-        });
-
-        var loading = $.loading();
-
-        $(document).ajaxStart(function () {
-            $(this).find(':input').attr('readonly', 'readonly');
-            $(this).find(':button').attr('disabled', 'disabled');
-        });
-
-        $(document).ajaxComplete(function () {
-            $(this).find(':input').removeAttr('readonly');
-            $(this).find(':button').removeAttr('disabled');
-        });
-
-
-        function openLoading(time) {
-            loading.open(time);
-        }
-
-        function closeLoading() {
-            loading.close();
-        }
-    </script>
 </body>
 
 </html>

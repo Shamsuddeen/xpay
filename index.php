@@ -39,7 +39,6 @@
 										<div class="count"><?php echo $wallet->currency."".number_format($wallet->balance, 2); ?></div>
 										<span class="count_bottom">Acc. No.: <?php echo $wallet->account_number; ?></span>
 									</div>
-						
                     	<?php 
 								}
 							} 

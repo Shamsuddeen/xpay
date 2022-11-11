@@ -6,18 +6,17 @@
         <nav class="nav navbar-nav">
             <ul class=" navbar-right">
                 <li class="nav-item dropdown open" style="padding-left: 15px;">
-                    <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown"
+                    <a href="profile.php" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown"
                         data-toggle="dropdown" aria-expanded="false">
                         <img src="images/img.jpg" alt=""><?php echo $firstName." ".$lastName; ?>
                     </a>
                     <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="javascript:;"> Profile</a>
-                        <a class="dropdown-item" href="javascript:;">
+                        <a class="dropdown-item" href="profile.php"> Profile</a>
+                        <a class="dropdown-item" href="profile.php">
                             <span class="badge bg-red pull-right">50%</span>
                             <span>Settings</span>
                         </a>
-                        <a class="dropdown-item" href="javascript:;">Help</a>
-                        <a class="dropdown-item" href="login.html"><i class="fa fa-sign-out pull-right"></i>
+                        <a class="dropdown-item" href="login.php"><i class="fa fa-sign-out pull-right"></i>
                             Log Out</a>
                     </div>
                 </li>

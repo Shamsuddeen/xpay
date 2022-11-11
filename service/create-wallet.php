@@ -16,7 +16,7 @@
             "reference" => $key,
             "email" => $user->email
         );
-        echo $request    = $app->sendRequest('seerbit', 'POST', $url, ['body' => json_encode($data)], "");
+        $request    = $app->sendRequest('seerbit', 'POST', $url, ['body' => json_encode($data)], "");
         $request    = json_decode($request, true);
         if(strtolower($request['status']) == "success"){
             $wallet = $app->createWallet(

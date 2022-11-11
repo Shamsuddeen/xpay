@@ -292,7 +292,7 @@ class xPay
         return $result;
     }
 
-    public function createInvoice($receiverName, $receiverEmail, array $items, $currency, $total, $dueDate)
+    public function createInvoice($user, $receiverName, $receiverEmail, array $items, $currency, $total, $dueDate)
     {
         $url        = '/invoice/create';
         $reference  = rand(100,9999).chr(rand(65,90)).chr(rand(65,90)).rand(10,99).rand(000110, 999999);
@@ -309,10 +309,10 @@ class xPay
         $request    = $this->sendRequest('seerbit', 'POST', $url, ['body' => json_encode($data)], '');
         $request    = json_decode($request, true);
         if($request['code'] == "00"){
-            $query  = "INSERT INTO `invoices`(`external_reference`, `order_number`, `receiver_name`, `receiver_email`, `items`, `total`, `currency`, `due_date`) 
-                                    VALUES (:ref, :order, :name, :email, :items, :total, :currency, :due)";
+            $query  = "INSERT INTO `invoices`(`user`, `external_reference`, `order_number`, `receiver_name`, `receiver_email`, `items`, `total`, `currency`, `due_date`) 
+                                    VALUES (:user, :ref, :order, :name, :email, :items, :total, :currency, :due)";
             $stmt   = $this->connect()->prepare($query);
-            if($stmt->execute(['ref' => $request['payload']['InvoiceNo'], 'order' => $orderId, 'name' => $receiverName, 'email' => $receiverEmail, 'items' => json_encode($items), 'total' => $total, 'currency' => $currency, 'due' => $dueDate])){
+            if($stmt->execute(['user' => $user, 'ref' => $request['payload']['InvoiceNo'], 'order' => $orderId, 'name' => $receiverName, 'email' => $receiverEmail, 'items' => json_encode($items), 'total' => $total, 'currency' => $currency, 'due' => $dueDate])){
                 $result = "success";
             }else{
                 $result = "error";
@@ -321,5 +321,65 @@ class xPay
 
         return $result;
     } 
+
+    public function getInvoices(array $options)
+    {
+        if (count($options) > 0) { // Check if WHERE fields are assigned
+            $query  = "SELECT * FROM `invoices` WHERE ";
+            $parts = array();
+            foreach ($options as $key => $value) { // loop through the arrays and set the conditions
+                $parts[] = "`" . $key . "` = '$value' ";
+            }
+            $query  = $query . implode(" AND ", $parts);
+        } else { // or just fetch all invoices
+            $query  = "SELECT * FROM `invoices`";
+        }
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll();
+        } else {
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function getInvoice(array $options){
+        $query  = "SELECT * FROM `invoice` WHERE ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+        }
+        $query  = $query . implode(" AND ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            $result = $stmt->fetch();
+        }else{
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function updateInvoice($invoice, array $options){
+        $query  = "SELECT * FROM `invoice` SET ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' WHERE `id` = :invoice";
+        }
+        $query  = $query . implode(", ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        if($stmt->execute(['invoice' => $invoice])){
+            $result = "success";
+        }else{
+            $result = "404";
+        }
+
+        return $result;
+    }
 
 }

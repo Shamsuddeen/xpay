@@ -62,7 +62,7 @@
                                             <select name="currency" class="form-control" id="currency">
                                                 <option selected disabled>SELECT CURRENCY</option>
                                                 <option value="NGN">Nigerian Naira</option>
-                                                <option value="GHC">Ghananian Cedis</option>
+                                                <option value="GHS">Ghananian Cedi</option>
                                                 <option value="KES">Kenyan Shilling</option>
                                                 <option value="TZS">Tanzanian Shilling</option>
                                                 <option value="XOF">CFA Franc</option>

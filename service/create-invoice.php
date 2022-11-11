@@ -24,14 +24,14 @@
         // print_r($items);
         // echo $total;
 
-        $invoice = $app->createInvoice($name, $email, $items, $currency, $total, $dueDate);
+        $invoice = $app->createInvoice($userId, $name, $email, $items, $currency, $total, $dueDate);
 
             if($invoice == "success"){
 ?>
                 <script>
                     new PNotify({
                         title: 'Great!',
-                        text: 'Wallet created successfully! Redirecting...',
+                        text: 'Invoice created successfully! Redirecting...',
                         type: 'success',
                         hide: false,
                         styling: 'bootstrap3'
@@ -40,6 +40,18 @@
                     setTimeout(function() {
                         window.location.reload();
                     }, 5000); //will call the function after 5 secs.
+                </script>
+<?php
+            }else{
+?>
+                <script>
+                    new PNotify({
+                        title: 'Opps...',
+                        text: 'Invoice cannot be created! Please try again...',
+                        type: 'error',
+                        hide: false,
+                        styling: 'bootstrap3'
+                    });
                 </script>
 <?php
             }

@@ -23,7 +23,7 @@
             "tax" => 7.5
         ]
     ];
-    echo $app->createInvoice('Shamsuddeen Omacy', 'omacys2@gmail.com', $items, 'NGN', 1000, '2022-12-11'); 
+    echo $app->createInvoice(1, 'Shamsuddeen Omacy', 'omacys2@gmail.com', $items, 'NGN', 1000, '2022-12-11'); 
     // {
     //     "status": "SUCCESS",
     //     "data": {

@@ -79,7 +79,7 @@
                                                     <select name="currency" class="form-control" id="currency">
                                                         <option selected disabled>SELECT CURRENCY</option>
                                                         <option value="NGN">Nigerian Naira</option>
-                                                        <option value="GHC">Ghananian Cedis</option>
+                                                        <option value="GHS">Ghananian Cedi</option>
                                                         <option value="KES">Kenyan Shilling</option>
                                                         <option value="TZS">Tanzanian Shilling</option>
                                                         <option value="XOF">CFA Franc</option>
@@ -154,7 +154,6 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Item Name</label>
                         <input type="text" name="itemName[]" placeholder="Item Name"
                             class="form-control" required="required"
                             title="Item Name">
@@ -162,7 +161,6 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Quantity</label>
                         <input type="number" name="itemQuantity[]"
                             placeholder="Quantity" class="form-control"
                             required="required" title="Item Quantity">
@@ -170,7 +168,6 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Rate</label>
                         <input type="number" name="itemRate[]" placeholder="Rate"
                             class="form-control" required="required"
                             title="Item Amount per Each">
@@ -178,7 +175,6 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label>Tax</label>
                         <input type="text" name="itemTax[]" placeholder="Tax"
                             class="form-control" required="required"
                             placeholder="7.5">

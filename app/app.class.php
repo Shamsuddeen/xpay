@@ -1,11 +1,13 @@
 <?php
-    date_default_timezone_set('Africa/Lagos');
-    require(__DIR__.'/../vendor/autoload.php');
+date_default_timezone_set('Africa/Lagos');
+require(__DIR__ . '/../vendor/autoload.php');
+// // Looing for .env at the root directory
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+use GuzzleHttp\Client;
 
-    use GuzzleHttp\Client;
-
-    if (!function_exists('array_get')) {
-        /*
+if (!function_exists('array_get')) {
+    /*
              *
              * @param array  $data
              * @param string $key
@@ -13,166 +15,221 @@
              *
              * @return mixed
              */
-        function array_get($data, $key, $default = false)
-        {
-            if (!is_array($data)) {
-                return $default;
-            }
-            return isset($data[$key]) ? $data[$key] : $default;
-        }
-    }
-    
-    if (!function_exists('array_keys_exist')) {
-        /**
-         * Checks if multiple keys exist in an array
-         *
-         * @param array $array
-         * @param array|string $keys
-         *
-         * @return bool
-         */
-        function array_keys_exist(array $array, $keys)
-        {
-            $count = 0;
-            if (!is_array($keys)) {
-                $keys = func_get_args();
-                array_shift($keys);
-            }
-            foreach ($keys as $key) {
-                if (array_key_exists($key, $array)) {
-                    $count++;
-                }
-            }
-    
-            return count($keys) === $count;
-        }
-    }
-    class xPay
+    function array_get($data, $key, $default = false)
     {
-        public function connect()
-        {
-            date_default_timezone_set("Africa/Lagos");
-            $host     = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname   = "xpay";
-            $charset  = "utf8mb4";
-            try {
-                $dsn = 'mysql:host=' . $host . ';dbname=' . $dbname . ";charset=" . $charset;
-                $pdo = new PDO($dsn, $username, $password);
-                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-                return $pdo;
-            } catch (PDOException $e) {
-                echo "Connection failed: " . $e->getMessage();
+        if (!is_array($data)) {
+            return $default;
+        }
+        return isset($data[$key]) ? $data[$key] : $default;
+    }
+}
+
+if (!function_exists('array_keys_exist')) {
+    /**
+     * Checks if multiple keys exist in an array
+     *
+     * @param array $array
+     * @param array|string $keys
+     *
+     * @return bool
+     */
+    function array_keys_exist(array $array, $keys)
+    {
+        $count = 0;
+        if (!is_array($keys)) {
+            $keys = func_get_args();
+            array_shift($keys);
+        }
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $array)) {
+                $count++;
             }
         }
 
-        public function cleanResponse($response)
-        {
-            $result = $response->getBody()->getContents();
-            return $result;
+        return count($keys) === $count;
+    }
+}
+class xPay
+{
+    public function connect()
+    {
+        date_default_timezone_set("Africa/Lagos");
+        $host     = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname   = "xpay";
+        $charset  = "utf8mb4";
+        try {
+            $dsn = 'mysql:host=' . $host . ';dbname=' . $dbname . ";charset=" . $charset;
+            $pdo = new PDO($dsn, $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+            return $pdo;
+        } catch (PDOException $e) {
+            echo "Connection failed: " . $e->getMessage();
         }
+    }
 
-        public function sendRequest($vendor, $method, $url, $params = [], $token)
-        {
-            if ($vendor == 'seerbit') {
-                $client = new Client([
-                    'base_uri' => "https://seerbitapi.com",
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Authorization' => 'Bearer i4a4nLkcye2qkL5hLSqCR/gIpXkCVHqc2lYsZf0CdS2vK9tIpe1vaURcRS/9XPtkmFsPJRH0DJo9yKDUdhX1HST8Dx0e45RKeCig6cCEU8jX3LXjiMSS5e3udMPTtsLF'
-                    ]
-                ]);
-            }
-            try {
-                if (strtolower($method) == 'get') {
-                    $result = $client->request('GET', $url);
-                    return $this->cleanResponse($result);
-                } elseif (strtolower($method) == 'post') {
-                    $result = $client->request('POST', $url, $params);
-                    return $this->cleanResponse($result);
-                } elseif (strtolower($method) == 'patch') {
-                    $result = $client->request('PATCH', $url, $params);
-                    return $this->cleanResponse($result);
-                }
-            } catch (Exception $e) {
-                // echo $e->getRequest();
-                // var_dump($e->getResponse());
-                throw $e;
-            }
+    public function cleanResponse($response)
+    {
+        $result = $response->getBody()->getContents();
+        return $result;
+    }
+
+    public function sendRequest($vendor, $method, $url, $params = [], $token)
+    {
+        if ($vendor == 'seerbit') {
+            $client = new Client([
+                'base_uri' => "https://seerbitapi.com",
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer '.$_ENV['SEERBIT_TOKEN']
+                ]
+            ]);
         }
-
-        public function getUsers(array $options)
-        {
-            if(count($options) > 0){ // Check if WHERE fields are assigned
-                $query  = "SELECT * FROM `users` WHERE ";
-                $parts = array();
-                foreach ($options as $key => $value) { // loop through the arrays and set the conditions
-                    $parts[] = "`" . $key . "` = '$value' ";
-                }
-                $query  = $query . implode(" AND ", $parts);
-            }else{ // or just fetch all users
-                $query  = "SELECT * FROM `users`";
+        try {
+            if (strtolower($method) == 'get') {
+                $result = $client->request('GET', $url);
+                return $this->cleanResponse($result);
+            } elseif (strtolower($method) == 'post') {
+                $result = $client->request('POST', $url, $params);
+                return $this->cleanResponse($result);
+            } elseif (strtolower($method) == 'patch') {
+                $result = $client->request('PATCH', $url, $params);
+                return $this->cleanResponse($result);
             }
-            $stmt   = $this->connect()->prepare($query);
-            $stmt->execute();
-            if($stmt->rowCount() > 0){
-                $result = $stmt->fetchAll();
-            }else{
-                $result = "404";
-            }
-
-            return $result;
+        } catch (Exception $e) {
+            // echo $e->getRequest();
+            // var_dump($e->getResponse());
+            throw $e;
         }
+    }
 
-        public function getUser(array $options)
-        {
+    public function getUsers(array $options)
+    {
+        if (count($options) > 0) { // Check if WHERE fields are assigned
             $query  = "SELECT * FROM `users` WHERE ";
             $parts = array();
-            foreach ($options as $key => $value) { // loop through the array and set the conditions
-                $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+            foreach ($options as $key => $value) { // loop through the arrays and set the conditions
+                $parts[] = "`" . $key . "` = '$value' ";
             }
             $query  = $query . implode(" AND ", $parts);
-
-            $stmt   = $this->connect()->prepare($query);
-            $stmt->execute();
-            if($stmt->rowCount() > 0){
-                $result = $stmt->fetch();
-            }else{
-                $result = "404";
-            }
-
-            return $result;
+        } else { // or just fetch all users
+            $query  = "SELECT * FROM `users`";
+        }
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll();
+        } else {
+            $result = "404";
         }
 
-        public function registerUser($firstName, $lastName, $phone, $email = null, $password, $uuid, $type = null, $agent = null)
-        {
-            $query  = "INSERT INTO `users` (`first_name`, `last_name`, `phone`, `email`, `password`, `uuid`, `type`, `agent`)
-                                VALUES (:firstName, :lastName, :phone, :email, :password, :uuid, :type, :agent)";
-            $stmt   = $this->connect()->prepare($query);
-            if($stmt->execute(['firstName' => $firstName, 'lastName' => $lastName, 'phone' => $phone, 'email' => $email, 'password' => $password, 'uuid' => $uuid, 'type' => $type, 'agent' => $agent])){
-                $result = "success";
-            }else{
-                $result = "error";
-            }
-
-            return $result;
-        }
-
-        public function loginUser($phone, $password){
-            $query  = "SELECT * FROM `users` WHERE `phone` = :phone AND `password` = :password";
-            $stmt   = $this->connect()->prepare($query);
-            $stmt->execute(['phone' => $phone, 'password' => $password]);
-            if($stmt->rowCount() > 0){
-                $result = $stmt->fetch();
-            }else{
-                $result = "error";
-            }
-
-            return $result;
-        }
-
+        return $result;
     }
 
-?>
+    public function getUser(array $options)
+    {
+        $query  = "SELECT * FROM `users` WHERE ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+        }
+        $query  = $query . implode(" AND ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetch();
+        } else {
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function registerUser($firstName, $lastName, $phone, $email = null, $password, $uuid, $type = null, $agent = null)
+    {
+        $query  = "INSERT INTO `users` (`first_name`, `last_name`, `phone`, `email`, `password`, `uuid`, `type`, `agent`)
+                                VALUES (:firstName, :lastName, :phone, :email, :password, :uuid, :type, :agent)";
+        $stmt   = $this->connect()->prepare($query);
+        if ($stmt->execute(['firstName' => $firstName, 'lastName' => $lastName, 'phone' => $phone, 'email' => $email, 'password' => $password, 'uuid' => $uuid, 'type' => $type, 'agent' => $agent])) {
+            $result = "success";
+        } else {
+            $result = "error";
+        }
+
+        return $result;
+    }
+
+    public function loginUser($phone, $password)
+    {
+        $query  = "SELECT * FROM `users` WHERE `phone` = :phone AND `password` = :password";
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute(['phone' => $phone, 'password' => $password]);
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetch();
+        } else {
+            $result = "error";
+        }
+
+        return $result;
+    }
+
+    public function getWallets(array $options)
+    {
+        if (count($options) > 0) { // Check if WHERE fields are assigned
+            $query  = "SELECT * FROM `wallets` WHERE ";
+            $parts = array();
+            foreach ($options as $key => $value) { // loop through the arrays and set the conditions
+                $parts[] = "`" . $key . "` = '$value' ";
+            }
+            $query  = $query . implode(" AND ", $parts);
+        } else { // or just fetch all wallets
+            $query  = "SELECT * FROM `wallets`";
+        }
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll();
+        } else {
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function getWallet(array $options)
+    {
+        $query  = "SELECT * FROM `wallets` WHERE ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+        }
+        $query  = $query . implode(" AND ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetch();
+        } else {
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function createWallet($userId, $reference, $accountNumber, $bank, $currency, $externalReference = null)
+    {
+        $query  = "INSERT INTO `wallets`(`user`, `reference`, `account_number`, `bank`, `external_reference`, `currency`) 
+                                VALUES (:user, :reference, :account, :bank, :external, :currency)";
+        $stmt   = $this->connect()->prepare($query);
+        if ($stmt->execute(['user' => $userId, 'reference' => $reference, 'account' => $accountNumber, 'bank' => $bank, 'external' => $externalReference, 'currency' => $currency])) {
+            $result = "success";
+        } else {
+            $result = "error";
+        }
+
+        return $result;
+    }
+}

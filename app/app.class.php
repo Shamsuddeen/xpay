@@ -232,4 +232,63 @@ class xPay
 
         return $result;
     }
+
+    public function saveTransaction($type, $reference, $user, $data, $status)
+    {
+        if($reference == null){
+            $reference  = rand(100,9999).chr(rand(65,90)).chr(rand(65,90)).rand(10,99).rand(000110, 999999);
+        }
+        $query  = "INSERT INTO `transactions`(`type`, `reference`, `user`, `data`, `status`) 
+                                        VALUES (:type, :reference, :user, :data, :status)";
+        $stmt   = $this->connect()->prepare($query);
+        if($stmt->execute(['type' => $type, 'reference' => $reference, 'user' => $user, 'data' => $data, 'status' => $status])){
+            $result = "success";
+        }else{
+            $result = "error";
+        }
+
+        return $result;
+    }
+
+    public function getTransactions(array $options)
+    {
+        if (count($options) > 0) { // Check if WHERE fields are assigned
+            $query  = "SELECT * FROM `transactions` WHERE ";
+            $parts = array();
+            foreach ($options as $key => $value) { // loop through the arrays and set the conditions
+                $parts[] = "`" . $key . "` = '$value' ";
+            }
+            $query  = $query . implode(" AND ", $parts);
+        } else { // or just fetch all transactions
+            $query  = "SELECT * FROM `transactions`";
+        }
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll();
+        } else {
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function getTransaction(array $options){
+        $query  = "SELECT * FROM `transactions` WHERE ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+        }
+        $query  = $query . implode(" AND ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            $result = $stmt->fetch();
+        }else{
+            $result = "404";
+        }
+
+        return $result;
+    }
 }

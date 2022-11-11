@@ -292,7 +292,7 @@ class xPay
         return $result;
     }
 
-    public function createInvoice($receiverName, $receiverEmail, array $items, $currency, $tax, $amount, $dueDate)
+    public function createInvoice($receiverName, $receiverEmail, array $items, $currency, $total, $dueDate)
     {
         $url        = '/invoice/create';
         $reference  = rand(100,9999).chr(rand(65,90)).chr(rand(65,90)).rand(10,99).rand(000110, 999999);
@@ -309,10 +309,10 @@ class xPay
         $request    = $this->sendRequest('seerbit', 'POST', $url, ['body' => json_encode($data)], '');
         $request    = json_decode($request, true);
         if($request['code'] == "00"){
-            $query  = "INSERT INTO `invoices`(`external_reference`, `order_number`, `receiver_name`, `receiver_email`, `items`, `tax`, `currency`, `due_date`) 
-                                    VALUES (:ref, :order, :name, :email, :items, :tax, :currency, :due)";
+            $query  = "INSERT INTO `invoices`(`external_reference`, `order_number`, `receiver_name`, `receiver_email`, `items`, `total`, `currency`, `due_date`) 
+                                    VALUES (:ref, :order, :name, :email, :items, :total, :currency, :due)";
             $stmt   = $this->connect()->prepare($query);
-            if($stmt->execute(['ref' => $request['payload']['InvoiceNo'], 'order' => $orderId, 'name' => $receiverName, 'email' => $receiverEmail, 'items' => json_encode($items), 'tax' => $tax, 'currency' => $currency, 'due' => $dueDate])){
+            if($stmt->execute(['ref' => $request['payload']['InvoiceNo'], 'order' => $orderId, 'name' => $receiverName, 'email' => $receiverEmail, 'items' => json_encode($items), 'total' => $total, 'currency' => $currency, 'due' => $dueDate])){
                 $result = "success";
             }else{
                 $result = "error";

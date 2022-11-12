@@ -54,14 +54,14 @@ class xPay
     public function connect()
     {
         date_default_timezone_set("Africa/Lagos");
-        $host     = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname   = "xpay";
+        // $host     = "localhost";
+        // $username = "root";
+        // $password = "";
+        // $dbname   = "xpay";
         $charset  = "utf8mb4";
         try {
-            $dsn = 'mysql:host=' . $host . ';dbname=' . $dbname . ";charset=" . $charset;
-            $pdo = new PDO($dsn, $username, $password);
+            $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ";charset=" . $charset;
+            $pdo = new PDO($dsn, $_ENV['USERNAME'], $_ENV['PASSWORD']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
             return $pdo;

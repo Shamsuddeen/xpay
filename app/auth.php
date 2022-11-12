@@ -23,4 +23,6 @@ if (isset($_SESSION['user']) && isset($_SESSION['uuid'])) {
     } else {
         header("Location: login.php");
     }
+} else {
+    header("Location: login.php");
 }

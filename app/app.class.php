@@ -1,9 +1,9 @@
 <?php
 date_default_timezone_set('Africa/Lagos');
-require(__DIR__ . './vendor/autoload.php');
+require('../vendor/autoload.php');
 // // Looing for .env at the root directory
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+// $dotenv->load();
 use GuzzleHttp\Client;
 
 if (!function_exists('array_get')) {
@@ -60,8 +60,8 @@ class xPay
         // $dbname   = "xpay";
         $charset  = "utf8mb4";
         try {
-            $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ";charset=" . $charset;
-            $pdo = new PDO($dsn, $_ENV['USERNAME'], $_ENV['PASSWORD']);
+            $dsn = 'mysql:host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_NAME') . ";charset=" . $charset;
+            $pdo = new PDO($dsn, getenv('USERNAME'), getenv('PASSWORD'));
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
             return $pdo;

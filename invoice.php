@@ -151,9 +151,8 @@
                                         <div class="row">
                                             <!-- accepted payments column -->
                                             <div class="col-md-6">
-                                                <p class="lead">Payment Methods:</p>
-                                                <img src="images/visa.png" alt="Visa">
-                                                <img src="images/mastercard.png" alt="Mastercard">
+                                                <p class="lead">STATUS:</p>
+                                                <p class="btn btn-info"><?php echo $invoice->status; ?></p>
                                             </div>
                                             <!-- /.col -->
                                             <div class="col-md-6">
@@ -179,11 +178,9 @@
                                                 <button class="btn btn-default" onclick="window.print();"><i
                                                         class="fa fa-print"></i>
                                                     Print</button>
-                                                <button class="btn btn-success pull-right"><i
-                                                        class="fa fa-credit-card"></i> Submit
-                                                    Payment</button>
-                                                <button class="btn btn-primary pull-right" style="margin-right: 5px;"><i
-                                                        class="fa fa-download"></i> Generate PDF</button>
+                                                <button class="btn btn-success pull-right" type="button" onclick="checkStatus('<?php echo $invoice->id; ?>');"><i
+                                                        class="fa fa-credit-card"></i> Check
+                                                    Payment Status</button>
                                             </div>
                                         </div>
                                     </section>
@@ -202,6 +199,42 @@
     </div>
 
     <?php include('components/scripts.php'); ?>
+    <script>
+        function checkStatus(invoice){
+            $.ajax({
+                type: 'post',
+                url: 'service/invoice.php',
+                data: {
+                    invoice: invoice
+                },
+                success: function (msg) {
+                    $('#info').html(msg);
+                }
+            });
+        }
+
+        var loading = $.loading();
+
+        $(document).ajaxStart(function(){
+            $(this).find(':input').attr('readonly', 'readonly');
+            $(this).find(':button').attr('disabled', 'disabled');
+        });
+
+        $(document).ajaxComplete(function(){
+            $(this).find(':input').removeAttr('readonly');
+            $(this).find(':button').removeAttr('disabled');
+        });
+
+
+        function openLoading(time) {
+            loading.open(time);
+        }
+
+        function closeLoading() {
+            loading.close();
+        }
+
+    </script>
 </body>
 
 </html>

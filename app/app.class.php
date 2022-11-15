@@ -1,9 +1,9 @@
 <?php
 date_default_timezone_set('Africa/Lagos');
-require('../vendor/autoload.php');
+require(__DIR__ . '/../vendor/autoload.php');
 // // Looing for .env at the root directory
-// $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-// $dotenv->load();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 use GuzzleHttp\Client;
 
 if (!function_exists('array_get')) {
@@ -60,8 +60,8 @@ class xPay
         // $dbname   = "xpay";
         $charset  = "utf8mb4";
         try {
-            $dsn = 'mysql:host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_NAME') . ";charset=" . $charset;
-            $pdo = new PDO($dsn, getenv('USERNAME'), getenv('PASSWORD'));
+            $dsn = 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'] . ";charset=" . $charset;
+            $pdo = new PDO($dsn, $_ENV['USERNAME'], $_ENV['PASSWORD']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
             return $pdo;
@@ -365,7 +365,7 @@ class xPay
     }
 
     public function updateInvoice($invoice, array $options){
-        $query  = "SELECT * FROM `invoices` SET ";
+        $query  = "UPDATE `invoices` SET `updated_at` = NOW(), ";
         $parts = array();
         foreach ($options as $key => $value) { // loop through the array and set the conditions
             $parts[] = "`" . $key . "` = '$value' WHERE `id` = :invoice";
@@ -377,6 +377,64 @@ class xPay
             $result = "success";
         }else{
             $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function invoiceStatus($invoiceId)
+    {
+        $invoice = $this->getInvoice(['id' => $invoiceId]);
+        if($invoice != "404"){
+            // {
+            //     "payload": {
+            //         "invoiceId": 146,
+            //         "invoiceNo": "SBT-INV-000146",
+            //         "totalAmount": 107.50,
+            //         "subTotal": 100.00,
+            //         "publicKey": "SBPUBK_ZNUONZZSC7VK9PGWG9QWNNHWLKK0INNP",
+            //         "testKey": "SBTESTPUBK_afXR5UIYCD26aNXBFePI3dBdhaq2pAz0",
+            //         "supportEmail": "omacys2@gmail.com",
+            //         "receiversName": "Shamsuddeen Omacy",
+            //         "customerEmail": "omacys2@gmail.com",
+            //         "businessName": "xPay [Hackathon]",
+            //         "tax": 7.50,
+            //         "dueDate": "2022-11-15",
+            //         "currency": "NGN",
+            //         "invoiceItems": [{
+            //             "itemName": "Hublot",
+            //             "unitPrice": 100.00,
+            //             "vat": 7.50,
+            //             "amount": 100.00,
+            //             "quantity": 1
+            //         }],
+            //         "customer": {},
+            //         "billingCycle": false,
+            //         "payButtonOnInvoices": false,
+            //         "enableAdvancedOptions": false,
+            //         "partialPayment": false,
+            //         "status": "PAID",
+            //         "createdAt": "2022-11-15T14:29:14.351"
+            //     },
+            //     "code": "00"
+            // }
+            $url = "/invoice/".$_ENV['SEERBIT_PUB']."/$invoice->external_reference";
+            $request = $this->sendRequest('seerbit', 'get', $url, [], "");
+            $request = json_decode($request, true);
+            if($request['code'] == "00"){
+                $update = $this->updateInvoice(
+                    $invoiceId, [
+                        'status' => $request['payload']['status']
+                    ]);
+                if($update == "success"){
+                    $result = "success";
+                }else{
+                    $result = "error";
+                }
+            }
+
+        }else{
+            $result = "error";
         }
 
         return $result;

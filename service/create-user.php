@@ -47,7 +47,7 @@
                     });
 
                     setTimeout(function () {
-                        window.location.reload(); 
+                        window.location="users.php"; 
                     }, 3000); //will call the function after 3 secs.
                 </script>
 <?php  

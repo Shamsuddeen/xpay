@@ -148,12 +148,12 @@ class xPay
         return $result;
     }
 
-    public function registerUser($firstName, $lastName, $phone, $email = null, $password, $uuid, $type = null, $agent = null)
+    public function registerUser($firstName, $lastName, $phone, $country = "NG", $currency = "NGN", $email = null, $password, $uuid, $type = null, $agent = null)
     {
-        $query  = "INSERT INTO `users` (`first_name`, `last_name`, `phone`, `email`, `password`, `uuid`, `type`, `agent`)
-                                VALUES (:firstName, :lastName, :phone, :email, :password, :uuid, :type, :agent)";
+        $query  = "INSERT INTO `users` (`first_name`, `last_name`, `phone`, `country`, `currency`, `email`, `password`, `uuid`, `type`, `agent`)
+                                VALUES (:firstName, :lastName, :phone, :country, :currency, :email, :password, :uuid, :type, :agent)";
         $stmt   = $this->connect()->prepare($query);
-        if ($stmt->execute(['firstName' => $firstName, 'lastName' => $lastName, 'phone' => $phone, 'email' => $email, 'password' => $password, 'uuid' => $uuid, 'type' => $type, 'agent' => $agent])) {
+        if ($stmt->execute(['firstName' => $firstName, 'lastName' => $lastName, 'phone' => $phone, 'email' => $email, 'password' => $password, 'uuid' => $uuid, 'type' => $type, 'agent' => $agent, 'country' => $country, 'currency' => $currency])) {
             $result = "success";
         } else {
             $result = "error";
@@ -219,15 +219,34 @@ class xPay
         return $result;
     }
 
-    public function createWallet($userId, $reference, $accountNumber, $bank, $currency, $externalReference = null)
+    public function createWallet($userId, $currency, $externalReference = null)
     {
-        $query  = "INSERT INTO `wallets`(`user`, `reference`, `account_number`, `bank`, `external_reference`, `currency`) 
-                                VALUES (:user, :reference, :account, :bank, :external, :currency)";
-        $stmt   = $this->connect()->prepare($query);
-        if ($stmt->execute(['user' => $userId, 'reference' => $reference, 'account' => $accountNumber, 'bank' => $bank, 'external' => $externalReference, 'currency' => $currency])) {
-            $result = "success";
-        } else {
-            $result = "error";
+        $user       = $this->getUser(['id' => $userId]);
+        $key        = rand(001, 999).rand(001, 999).rand(001, 999).rand(1, 9);
+        $key        = md5($key.$user->uuid);
+        $url        = "/api/v2/virtual-accounts";
+        $data       = array(
+            "publicKey" => $_ENV['SEERBIT_PUB'],
+            "fullName" => $user->first_name." ".$user->last_name,
+            "bankVerificationNumber" => "",
+            "currency" => $currency,
+            "country" => $user->country,
+            "reference" => $key,
+            "email" => $user->email
+        );
+        $request    = $this->sendRequest('seerbit', 'POST', $url, ['body' => json_encode($data)], "");
+        $request    = json_decode($request, true);
+        if(strtolower($request['status']) == "success"){
+            $accountNumber  = $request['data']['payments']['accountNumber'];
+            $bank           = $request['data']['payments']['bankName'];
+            $query  = "INSERT INTO `wallets`(`user`, `reference`, `account_number`, `bank`, `external_reference`, `currency`) 
+                                    VALUES (:user, :reference, :account, :bank, :external, :currency)";
+            $stmt   = $this->connect()->prepare($query);
+            if ($stmt->execute(['user' => $userId, 'reference' => $key, 'account' => $accountNumber, 'bank' => $bank, 'external' => $externalReference, 'currency' => $currency])) {
+                $result = "success";
+            } else {
+                $result = "error";
+            }
         }
 
         return $result;

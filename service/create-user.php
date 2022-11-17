@@ -35,7 +35,7 @@
 <?php
             }
         }else{
-            if($app->registerUser($firstName, $lastName, $phone, $country, $currency, $email, $password, $uuid, 'user', $userId) != "error"){
+            if($app->registerUser($firstName, $lastName, $phone, $country, $currency, null, $password, $uuid, 'user', $userId) != "error"){
 ?>
                 <script>
                     new PNotify({

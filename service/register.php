@@ -39,7 +39,7 @@
 <?php
             }
         }else{
-            if($app->registerUser($firstName, $lastName, $phone, $email, $password, $uuid, 'user', null) == "success"){
+            if($app->registerUser($firstName, $lastName, $phone, $country = "NG", $currency = "NGN", $email, $password, $uuid, 'user', null) != "error"){
 ?>
                 <script>
                     new PNotify({
@@ -52,7 +52,7 @@
 
                     setTimeout(function () {
                         window.location="./login.php"; 
-                    }, 5000); //will call the function after 3 secs.
+                    }, 2000); //will call the function after 2 secs.
                 </script>
 <?php  
             }

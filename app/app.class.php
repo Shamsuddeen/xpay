@@ -111,7 +111,7 @@ class xPay
             $query  = "SELECT * FROM `users` WHERE ";
             $parts = array();
             foreach ($options as $key => $value) { // loop through the arrays and set the conditions
-                $parts[] = "`" . $key . "` = '$value' ";
+                $parts[] = "`" . $key . "` = '$value' ORDER BY `id` DESC";
             }
             $query  = $query . implode(" AND ", $parts);
         } else { // or just fetch all users
@@ -275,11 +275,11 @@ class xPay
             $query  = "SELECT * FROM `transactions` WHERE ";
             $parts = array();
             foreach ($options as $key => $value) { // loop through the arrays and set the conditions
-                $parts[] = "`" . $key . "` = '$value' ";
+                $parts[] = "`" . $key . "` = '$value' ORDER BY `id` DESC";
             }
             $query  = $query . implode(" AND ", $parts);
         } else { // or just fetch all transactions
-            $query  = "SELECT * FROM `transactions`";
+            $query  = "SELECT * FROM `transactions` ORDER BY `id` DESC";
         }
         $stmt   = $this->connect()->prepare($query);
         $stmt->execute();

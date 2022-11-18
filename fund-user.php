@@ -61,7 +61,9 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <form id="account" method="post"></form>
+                                            <div class="col-md-12">
+                                                <form id="account" method="post"></form>
+                                            </div>
                                         </div>
                                         <!-- /.row -->
                                     </section>

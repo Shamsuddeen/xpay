@@ -1,33 +1,33 @@
 <?php
     require('../app/auth.php');
     if($_POST){
-        $phone  = trim($_POST['phone']);
-        $gUser   = $app->getUser(['phone' => $phone]);
+        $phone      = trim($_POST['phone']);
+        $receiver   = $app->getUser(['phone' => $phone]);
 
-        if($gUser != "404"){
+        if($receiver != "404"){
 ?>
             <div class="row">
                 <div class="col-md-6">
                     <label for="">Amount</label>
                     <div class="input-group">
-                        <div class="input-group-addon"><?php echo $gUser->currency; ?></div>
+                        <div class="input-group-addon"><?php echo $receiver->currency; ?></div>
                         <input type="tel" class="form-control" name="amount" placeholder="Amount">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                    <label for="">User</label>
-                    <input type="text" name="accountName" readonly="readonly" class="form-control" value="<?php echo $gUser->first_name.' '.$gUser->last_name; ?>" >
+                        <label for="">User</label>
+                        <input type="text" name="accountName" readonly="readonly" class="form-control" value="<?php echo $receiver->first_name.' '.$receiver->last_name; ?>" >
                     </div>
                 </div>
-
+                <input type="hidden" name="user" value="<?php echo $receiver->id; ?>">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="wallet">Wallet</label>
                         <select name="wallet" id="wallet" class="form-control">
                             <option selected disabled>SELECT WALLET</option>
                             <?php
-                                $wallets = $app->getWallets(['user' => $userId, 'currency' => $gUser->currency]);
+                                $wallets = $app->getWallets(['user' => $userId, 'currency' => $receiver->currency]);
                                 if($wallets != "404"){
                                     foreach ($wallets as $wallet) {
                             ?>
@@ -41,6 +41,7 @@
                         <?php
                             // print_r($wallets);
                         ?>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Fund User</button>
                     </div>
                 </div>
             </div>

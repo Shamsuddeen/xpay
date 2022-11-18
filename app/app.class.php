@@ -252,15 +252,15 @@ class xPay
         return $result;
     }
 
-    public function saveTransaction($type, $reference, $user, $data, $status)
+    public function saveTransaction($type, $wallet, $reference, $user, $data, $amount, $oldBalance, $newBalance, $status)
     {
         if($reference == null){
             $reference  = rand(100,9999).chr(rand(65,90)).chr(rand(65,90)).rand(10,99).rand(000110, 999999);
         }
-        $query  = "INSERT INTO `transactions`(`type`, `reference`, `user`, `data`, `status`) 
-                                        VALUES (:type, :reference, :user, :data, :status)";
+        $query  = "INSERT INTO `transactions`(`type`, `wallet`, `reference`, `user`, `data`, `amount`, `balance_before`, `balance_after`, `status`) 
+                                        VALUES (:type, :wallet, :reference, :user, :data, :amount, :before, :after, :status)";
         $stmt   = $this->connect()->prepare($query);
-        if($stmt->execute(['type' => $type, 'reference' => $reference, 'user' => $user, 'data' => $data, 'status' => $status])){
+        if($stmt->execute(['type' => $type, 'wallet' => $wallet, 'reference' => $reference, 'user' => $user, 'data' => $data, 'amount' => $amount, 'before' => $oldBalance, 'after' => $newBalance, 'status' => $status])){
             $result = "success";
         }else{
             $result = "error";
@@ -459,4 +459,47 @@ class xPay
         return $result;
     }
 
+    public function fundWallet($walletId, $amount, $oldBalance, $newBalance, array $data, $reference = null)
+    {
+        if($reference == null){
+            $reference  = rand(100,9999).chr(rand(65,90)).chr(rand(65,90)).rand(10,99).rand(000110, 999999);
+        }
+
+        $wallet     = $this->getWallet(['id' => $walletId]);
+        $balance    = $wallet->balance;
+        $newBalance = $balance + $amount;
+
+        $data       = json_encode($data);
+        $query      = "UPDATE `wallets` SET `balance` = :balance WHERE `id` = :wallet";
+        $stmt       = $this->connect()->prepare($query);
+        if($stmt->execute(['wallet' => $walletId, 'balance' => $newBalance])){
+            $this->saveTransaction('credit', $walletId, $reference, $wallet->user, $data, $amount, $oldBalance, $newBalance, 'successful');
+            $result = "success";
+        }else{
+            $result = "error";
+        }
+
+        return $result;
+    }
+
+    public function debitWallet($walletId, $amount){
+        $reference  = rand(100,9999).chr(rand(65,90)).chr(rand(65,90)).rand(10,99).rand(000110, 999999);
+        $wallet     = $this->getWallet(['id' => $walletId]);
+        if ($wallet->balance >= $amount) {
+            $balance    = $wallet->balance - $amount;
+
+            $query  = "UPDATE `wallets` SET `balance` = :balance WHERE `id` = :wallet";
+            $stmt   = $this->connect()->prepare($query);
+            if($stmt->execute(['balance' => $balance, 'wallet' => $walletId])){
+                // $this->saveTransaction('debit', $reference, $wallet->user, json_encode($data), 'successful');
+                $result = "success";
+            }else{
+                $result = "error";
+            }
+        }else{
+            $result = "error";
+        }
+
+        return $result;
+    }
 }

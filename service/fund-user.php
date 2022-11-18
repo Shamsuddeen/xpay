@@ -23,7 +23,7 @@
                     $debit = $app->debitWallet($walletId, $amount, $oldBalance, $newBalance, $data, null);
                     if($debit == 'success'){
                         $receiverWallet     = $app->getWallet(['user' => $receiverId]);
-                        $oldBalance = $senderWallet->balance;
+                        $oldBalance = $receiverWallet->balance;
                         $newBalance = $oldBalance + $amount;
         
                         $data = array(

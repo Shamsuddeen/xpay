@@ -74,7 +74,7 @@
                                                                         <td><?php echo $transaction->reference; ?></td>
                                                                         <td><?php echo $transaction->type; ?></td>
                                                                         <td><?php echo number_format($transaction->amount, 2); ?></td>
-                                                                        <td><?php echo print_r($transaction->data); ?></td>
+                                                                        <td><?php print_r($transaction->data); ?></td>
                                                                         <td><?php echo date('jS, m Y', strtotime($transaction->trxn_date)); ?></td>
                                                                         <td><?php echo number_format($transaction->balance_before, 2); ?></td>
                                                                         <td><?php echo number_format($transaction->balance_after, 2); ?></td>

@@ -41,8 +41,8 @@
                         <?php
                             // print_r($wallets);
                         ?>
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">Fund User</button>
                     </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Fund User</button>
                 </div>
             </div>
 <?php

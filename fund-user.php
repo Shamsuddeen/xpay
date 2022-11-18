@@ -51,7 +51,7 @@
                                         <!-- info row -->
                                         <div class="row">
                                             <div class="col-md-12 col-sm-12 col-lg-12 tile_stats_count">
-                                                <form action="" method="post">
+                                                <form id="verify" method="post">
                                                     <div class="form-group">
                                                         <label for="phone">User Phone Number</label>
                                                         <input type="tel" name="phone" class="form-control" id="phone" placeholder="+2347012345678">
@@ -85,13 +85,26 @@
     <script>
         $(document).ready(function () {
             // Submit Form
-            $('form').on('submit', function (e) {
+            $('#verify').on('submit', function (e) {
                 $.ajax({
                     type: 'post',
                     url: 'service/verify-user.php',
                     data: $(this).serialize(),
                     success: function (msg) {
                         $('#account').html(msg);
+                    }
+                });
+                e.preventDefault();
+            });
+
+            // Submit Form
+            $('#account').on('submit', function (e) {
+                $.ajax({
+                    type: 'post',
+                    url: 'service/fund-user.php',
+                    data: $(this).serialize(),
+                    success: function (msg) {
+                        $('#info').html(msg);
                     }
                 });
                 e.preventDefault();

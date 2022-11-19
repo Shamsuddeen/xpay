@@ -57,15 +57,6 @@
                                 </div>
                                 <div class="x_content">
                                     <section class="content invoice">
-                                        <!-- title row -->
-                                        <div class="row">
-                                            <div class="invoice-header">
-                                                <h1>
-                                                    <i class="fa fa-globe"></i><?php ?>
-                                                </h1>
-                                            </div>
-                                            <!-- /.col -->
-                                        </div>
                                         <!-- info row -->
                                         <div class="row invoice-info">
                                             <div class="col-sm-5 invoice-col">

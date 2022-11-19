@@ -62,7 +62,7 @@
                                                             <th>Data</th>
                                                             <th>Date</th>
                                                             <th>Balance Before</th>
-                                                            <th>Nalance After</th>
+                                                            <th>Balance After</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -78,7 +78,7 @@
                                                                         <td><?php echo $transaction->type; ?></td>
                                                                         <td><?php echo number_format($transaction->amount, 2); ?></td>
                                                                         <td><?php print_r($transaction->data); ?></td>
-                                                                        <td><?php echo date('jS, m Y @ G:i', strtotime($transaction->trxn_date)); ?></td>
+                                                                        <td><?php echo date('jS, M Y @ G:i', strtotime($transaction->trxn_date)); ?></td>
                                                                         <td><?php echo number_format($transaction->balance_before, 2); ?></td>
                                                                         <td><?php echo number_format($transaction->balance_after, 2); ?></td>
                                                                     </tr>

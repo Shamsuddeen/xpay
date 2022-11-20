@@ -1,6 +1,11 @@
 <?php 
     require('app/auth.php');
-    $storeId = trim($_GET['id']); 
+    if(isset($_GET['id'])){
+        $storeId    = trim($_GET['id']); 
+        $store      = $app->getStore(['id' => $storeId]);
+    }else{
+        header("Location: ./stores.php");
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,17 +75,16 @@
                                                             $products = $app->getProducts(['store' => $storeId]);
                                                             if($products != "404"){
                                                                 $i = 1;
-                                                                foreach ($products as $store) {
+                                                                foreach ($products as $product) {
                                                         ?>
                                                                 <tr>
                                                                     <td><?php echo $i; ?></td>
-                                                                    <td><?php echo $store->name; ?></td>
-                                                                    <td><?php echo $store->address; ?></td>
-                                                                    <td><?php echo $store->email; ?></td>
-                                                                    <td><?php echo $store->currency; ?></td>
+                                                                    <td><?php echo $product->title; ?></td>
+                                                                    <td><?php echo $product->description; ?></td>
+                                                                    <td><?php echo $store->currency.number_format($product->price, 2); ?></td>
+                                                                    <td><?php echo $product->tax; ?></td>
                                                                     <td>
-                                                                        <a class="btn btn-primary" href="orders.php?id=<?php echo $store->id; ?>">Orders</a>
-                                                                        <a class="btn btn-danger" href="products.php?id=<?php echo $store->id; ?>">Products</a>
+                                                                        <a class="btn btn-primary" href="orders.php?product=<?php echo $store->id; ?>">Orders</a>
                                                                     </td>
                                                                 </tr>
                                                         <?php

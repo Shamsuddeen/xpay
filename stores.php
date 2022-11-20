@@ -75,6 +75,7 @@
                                                                     <td><?php echo $store->email; ?></td>
                                                                     <td><?php echo $store->currency; ?></td>
                                                                     <td>
+                                                                        <a class="btn btn-primary" href="merchant-store.php?id=<?php echo $store->id; ?>">Visit Store</a>
                                                                         <a class="btn btn-primary" href="orders.php?id=<?php echo $store->id; ?>">Orders</a>
                                                                         <a class="btn btn-danger" href="products.php?id=<?php echo $store->id; ?>">Products</a>
                                                                     </td>

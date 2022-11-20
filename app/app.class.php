@@ -503,4 +503,78 @@ class xPay
 
         return $result;
     }
+
+    public function createStore($name, $phone, $email, $address, $country, $currency, $owner)
+    {
+        $query  = "INSERT INTO `stores`(`name`, `phone`, `email`, `address`, `country`, `currency`, `owner`) 
+                                VALUES (:name, :phone, :email, :address, :country, :currency, :owner)";
+        $stmt   = $this->connect()->prepare($query);
+        if($stmt->execute(['name' => $name, 'phone' => $phone, 'email' => $email, 'address' => $address, 'country' => $country, 'owner' => $owner, 'currency' => $currency])){
+            $result = "success";
+        }else{
+            $result = "error";
+        }
+
+        return $result;
+    } 
+
+    public function getStores(array $options)
+    {
+        if (count($options) > 0) { // Check if WHERE fields are assigned
+            $query  = "SELECT * FROM `stores` WHERE ";
+            $parts = array();
+            foreach ($options as $key => $value) { // loop through the arrays and set the conditions
+                $parts[] = "`" . $key . "` = '$value' ";
+            }
+            $query  = $query . implode(" AND ", $parts);
+        } else { // or just fetch all Stores
+            $query  = "SELECT * FROM `stores`";
+        }
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            $result = $stmt->fetchAll();
+        } else {
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function getStore(array $options){
+        $query  = "SELECT * FROM `stores` WHERE ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+        }
+        $query  = $query . implode(" AND ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        $stmt->execute();
+        if($stmt->rowCount() > 0){
+            $result = $stmt->fetch();
+        }else{
+            $result = "404";
+        }
+
+        return $result;
+    }
+
+    public function updateStore($store, array $options){
+        $query  = "UPDATE `stores` SET `updated_at` = NOW(), ";
+        $parts = array();
+        foreach ($options as $key => $value) { // loop through the array and set the conditions
+            $parts[] = "`" . $key . "` = '$value' WHERE `id` = :store";
+        }
+        $query  = $query . implode(", ", $parts);
+
+        $stmt   = $this->connect()->prepare($query);
+        if($stmt->execute(['store' => $store])){
+            $result = "success";
+        }else{
+            $result = "error";
+        }
+
+        return $result;
+    }
 }

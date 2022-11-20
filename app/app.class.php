@@ -204,7 +204,7 @@ class xPay
         $query  = "SELECT * FROM `wallets` WHERE ";
         $parts = array();
         foreach ($options as $key => $value) { // loop through the array and set the conditions
-            $parts[] = "`" . $key . "` = '$value' LIMIT 1";
+            $parts[] = "`" . $key . "` = '$value'";
         }
         $query  = $query . implode(" AND ", $parts);
 

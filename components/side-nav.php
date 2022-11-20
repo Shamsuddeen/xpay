@@ -48,11 +48,18 @@
                         <li><a href="transactions.php">View Transactions</a></li>
                     </ul>
                 </li>
+                <li><a><i class="fa fa-building"></i> Store <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                        <li><a href="create-store.php">Create Store</a></li>
+                        <li><a href="stores.php">My Stores</a></li>
+                        <li><a href="orders.php">Orders</a></li>
+                        <li><a href="products.php">Products</a></li>
+                    </ul>
+                </li>
                 <li><a><i class="fa fa-money"></i> Wallet <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                         <li><a href="wallets.php">My Wallets</a></li>
-                        <li><a href="collection.php">xPay Collections</a></li>
-                        <li><a href="chechout.php">xPay Checkout</a></li>
+                        <li><a href="checkout.php">xPay Checkout</a></li>
                     </ul>
                 </li>
             </ul>
